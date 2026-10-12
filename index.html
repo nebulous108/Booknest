@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BookNest</title>
+        <!-- pixel font -->
+         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2p&display=swap" rel="stylesheet">
+         <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <header>
+            <h1>BookNest</h1>
+            <p> class="tagline>my reading shelf</p>
+        </header>
+
+        <main>
+            <section class="add-ook">
+                <h2>add a book</h2>
+                <form id="book-form">
+                    <input type="text" id="title" placeholder="title" required>
+                    <input type="text" id="author"   placeholder="author">
+                    <select id="genre">
+                        <option value="">genre</option>
+                        <option>fantasy</option>
+                        <option>mystery</option>
+                        <option>realistic</option>
+                        <option>other</option>
+                    </select>
+                    <input type="number" id="rating" min="1" max="5" placeholder="rating 1-5">
+                    <textarea id=""notes" placeholder="quick notes / review"></textarea>
+                    <button type=""submit>add to shelf</button>
+            </section>
+
+            <section class=""shelf">
+                <h2>your shelf</h2>
+                <div id="book-list">
+                    <!-- books go here -->
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>made by Nebulous • 2026</p>
+        </footer>
+
+        <script src="script.js"></script>
+    </body>
+</html>
+

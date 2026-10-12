@@ -1,0 +1,102 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #1a1a2e;
+    color: #eaeaea;
+    font-family: 'Press Start P', monospace;
+    fint-size: 10-x;
+    line-height: 1.6;
+    padding: 20px;
+    image-rendering: pixelated;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 4px solid #16213e;
+    padding-bottom: 15px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #e94560;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 #0f3460;
+}
+
+.tagline {
+    font-size: 8px;
+    color: #0f3460;
+    margin-top: 8px;
+}
+
+.add-book, .shelf{
+    background: #16213e;
+    border: 3px solid #0f3460;
+    padding: 15px;
+    margin-bottom: 20px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h2 {
+    font-size: 12px;
+    color: #e94560;
+    margin-bottom: 12px;
+}
+
+input, slect, textarea, button {
+    font-family: 'Press Start 2P',  monospace;
+    font-size: 8px;
+    background: #0f3460;
+    color: #eaeaea;
+    border: 2px solid #e94560;
+    padding: 8px;
+    margin: 4px 0;
+    width: 100%;
+    display: block;
+}
+
+button {
+    background: #e94560;
+    color: #1a1a2e;
+    cursor: pointer;
+    border: 2px solid #0f3460;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #ff6b81;
+}
+
+textarea {
+    height: 60px;
+    resize: vertical;
+}
+
+#booklist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.book-card {
+    background: #0f3460;
+    border: 2px solid #e94560;
+    padding: 10px;
+    width: 180px;
+    font-size: 7px;
+    font-size: 7px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 6px;
+    color: #0f3460;
+}
