@@ -67,7 +67,7 @@ form.addEventListener("submit", function(e) {
     form.reset();
 });
 
-// close modal if you click outside the content
+// closes modal if you click outside the content
 modal.addEventListener("click", (e) => {
     if (e.target === modal) closeDetail();
 });

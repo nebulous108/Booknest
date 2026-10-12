@@ -52,7 +52,7 @@ h2 {
 
 input, select, textarea, button {
     font-family: 'Press Start 2P', monospace;
-    font-size: 12px; /* bigger and more readable */
+    font-size: 12px; /* bigger and more readable to the eye */
     background: #0f3460;
     color: #eaeaea;
     border: 3px solid #e94560;
