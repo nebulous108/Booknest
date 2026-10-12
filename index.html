@@ -1,50 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookNest</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <h1>BookNest</h1>
-        <p class="tagline">my reading shelf</p>
-    </header>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BookNest</title>
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="="stylesheet">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>
+            <h1>BookNest</h1>
+            <p class="tagline">My reading shelf</p>
+        </header>
 
-    <main>
-        <section class="add-book">
-            <h2>add a book</h2>
-            <form id="book-form">
-                <input type="text" id="title" placeholder="title" required>
-                <input type="text" id="author" placeholder="author">
-                <select id="genre">
-                    <option value="">genre</option>
-                    <option>fantasy</option>
-                    <option>sci-fi</option>
-                    <option>mystery</option>
-                    <option>realistic</option>
-                    <option>other</option>
-                </select>
-                <input type="number" id="rating" min="1" max="5" placeholder="rating 1-5">
-                <textarea id="notes" placeholder="quick notes / review"></textarea>
-                <button type="submit">add to shelf</button>
-            </form> <!-- FIXED: added missing </form> so the shelf isn't nested inside the form -->
-        </section>
+        <main>
+            <section class="add-book">
+                <h2>Add a book</h2>
+                <form id="book-form">
+                    <input type="text" id="title" placeholder="title" required>
+                    <input type="text" id="author" placeholder="author" required>
+                    <select id="genre">
+                        <option value="">Genre</option>
+                        <option>Sci-Fi</option>
+                        <option>Mystery</option>
+                        <option>Realistic</option>
+                        <option>Dystopian</option>
+                        <option>Action</option>
+                        <option>Fantasy</option>
+                        <option>Romance</option>
+                        <option>Sport</option>
+                        <option>Other</option>
+                    </select>
+                    <input type="number" id="rating" min="1" max="5" placeholder="Your rating (1-5)" required>
+                    <textarea id="notes" placeholder="Quick notes / Review"></textarea>
+                    <button type="submit">Add to shelf</button>
+                </form>
+            </section>
 
-        <section class="shelf">
-            <h2>your shelf</h2>
-            <div id="book-list">
-                <!-- books go here -->
-            </div>
-        </section>
-    </main>
+            <section class="shelf">
+                <h2>Your shelf</h2>
+                <div id="book-list"></div>
+            </section>
+        </main>
+        
+        <div id="detail-modal" class="modal hidden">
+            <div class="modal-content">
+                <button id="close-modal">close</button>
+                <h3 id="detail-title"></h3>
+                <p id="detail-author"></p>
+                <p id="detail-genre"></p>
+                <p id="detail-rating"></p>
+                <p id="detail-notes"></p>
+                <button id="delete-book">Delete this book</button>
+        </div>
+    </div>
 
     <footer>
-        <p>made by me • 2026</p>
+        <p>Made by Nebulous • 2026</p>
     </footer>
 
     <script src="script.js"></script>
 </body>
-</html>
+</html>    
