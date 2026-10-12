@@ -148,3 +148,20 @@ footer {
     font-size: 10px;
     color: #0f3460;
 }
+
+/* New: hide cancel button by default */
+.hidden {
+    display: none;
+}
+
+/* New: small style so the two buttons in the form sit nicer */
+#cancel-edit {
+    background: #0f3460;
+    color: #eaeaea;
+    border-color: #e94560;
+    margin-top: 8px;
+}
+
+#cancel-edit:hover {
+    background: #16213e;
+}

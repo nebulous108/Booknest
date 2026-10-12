@@ -3,9 +3,14 @@ const bookList = document.getElementById("book-list");
 const modal = document.getElementById("detail-modal");
 const closeModal = document.getElementById("close-modal");
 const deleteBtn = document.getElementById("delete-book");
+const editBtn = document.getElementById("edit-book");          // NEW
+const cancelEditBtn = document.getElementById("cancel-edit");  // NEW
+const formTitle = document.getElementById("form-title");       // NEW
+const submitBtn = document.getElementById("submit-btn");       // NEW
 
 let books = JSON.parse(localStorage.getItem("books")) || [];
 let currentIndex = null;
+let editingIndex = null;  // NEW: tracks which book we’re editing (null = adding new)
 
 function renderBooks() {
     bookList.innerHTML = "";
@@ -39,6 +44,33 @@ function closeDetail() {
     currentIndex = null;
 }
 
+function startEdit(index) {  // NEW: function that fills the form for editing
+    const book = books[index];
+    editingIndex = index;
+
+    document.getElementById("title").value = book.title;
+    document.getElementById("author").value = book.author || "";
+    document.getElementById("genre").value = book.genre || "";
+    document.getElementById("rating").value = book.rating || "";
+    document.getElementById("notes").value = book.notes || "";
+
+    formTitle.textContent = "edit book";
+    submitBtn.textContent = "save changes";
+    cancelEditBtn.classList.remove("hidden");
+
+    closeDetail();
+    // scroll form into view
+    form.scrollIntoView({ behavior: "smooth" });
+}
+
+function cancelEdit() {  // NEW: reset form back to "add" mode
+    editingIndex = null;
+    form.reset();
+    formTitle.textContent = "add a book";
+    submitBtn.textContent = "add to shelf";
+    cancelEditBtn.classList.add("hidden");
+}
+
 closeModal.addEventListener("click", closeDetail);
 
 deleteBtn.addEventListener("click", () => {
@@ -49,6 +81,14 @@ deleteBtn.addEventListener("click", () => {
         closeDetail();
     }
 });
+
+editBtn.addEventListener("click", () => {  // NEW
+    if (currentIndex !== null) {
+        startEdit(currentIndex);
+    }
+});
+
+cancelEditBtn.addEventListener("click", cancelEdit);  // NEW
 
 form.addEventListener("submit", function(e) {
     e.preventDefault();
@@ -61,13 +101,25 @@ form.addEventListener("submit", function(e) {
     const rating = Number(document.getElementById("rating").value) || null;
     const notes = document.getElementById("notes").value.trim();
 
-    books.push({ title, author, genre, rating, notes });
+    const bookData = { title, author, genre, rating, notes };
+
+    if (editingIndex !== null) {
+        // NEW: update existing book
+        books[editingIndex] = bookData;
+        editingIndex = null;
+        formTitle.textContent = "add a book";
+        submitBtn.textContent = "add to shelf";
+        cancelEditBtn.classList.add("hidden");
+    } else {
+        // normal add
+        books.push(bookData);
+    }
+
     localStorage.setItem("books", JSON.stringify(books));
     renderBooks();
     form.reset();
 });
 
-// closes modal if you click outside the content
 modal.addEventListener("click", (e) => {
     if (e.target === modal) closeDetail();
 });

@@ -15,7 +15,7 @@
 
         <main>
             <section class="add-book">
-                <h2>Add any book</h2>
+                <h2 id="form-title">Add any book</h2> <!-- New: id so we can change the text when editing -->
                 <form id="book-form">
                     <input type="text" id="title" placeholder="title" required>
                     <input type="text" id="author" placeholder="author" required>
@@ -33,7 +33,8 @@
                     </select>
                     <input type="number" id="rating" min="1" max="5" placeholder="Your rating (1-5)" required>
                     <textarea id="notes" placeholder="Quick notes / Review"></textarea>
-                    <button type="submit">Add to shelf</button>
+                    <button type="submit" id="submit-btn">Add to shelf</button> <!--New: id so we can change the button text-->
+                    <button type="button" id="cancel-edit" class="hidden">Cancel edits</button> <!--New: added a new cancel button to cancel any edits, and it is hidden by default-->
                 </form>
             </section>
 
@@ -51,14 +52,15 @@
                 <p id="detail-genre"></p>
                 <p id="detail-rating"></p>
                 <p id="detail-notes"></p>
+                <button id="edit-book">Edit this book</button> <!--New: edit button-->
                 <button id="delete-book">Delete this book</button>
+            </div>
         </div>
-    </div>
 
-    <footer>
+        <footer>
         <p>Made by Nebulous • 2026</p>
-    </footer>
+        </footer>
 
-    <script src="script.js"></script>
-</body>
+        <script src="script.js"></script>
+    </body>
 </html>    
