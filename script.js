@@ -21,11 +21,15 @@ function renderBooks() {
 }
 
 form.addEventListener("submit", function(e) {
+    e.preventDefault(); //prevents the page from refreshing so the book stays.
+    
     const title = document.getElementById("title").value;
+    if (!title) return; // prevents adding blank titled books
+
     const author = document.getElementById("author").value;
     const genre = document.getElementById("genre").value;
-    const rating = document.getElementById("rating").value;
-    const notes = document.getElementById("notes").value;
+    const rating = Number(document.getElementById("rating").value) || null; //converted rating to a number
+    const notes = document.getElementById("notes").value.trim();
 
     books.push({ title, author, genre, rating, notes });
     localStorage.setItem("books", JSON.stringify(books));
@@ -34,4 +38,4 @@ form.addEventListener("submit", function(e) {
 });
 
 renderBooks();
-console.log("books loaded:", books.length);
+// removed the debug console log
