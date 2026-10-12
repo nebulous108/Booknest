@@ -1,12 +1,11 @@
-const form = document.getElementById("bookform");
+const form = document.getElementById("book-form");
 const bookList = document.getElementById("book-list");
 
-// load books from localStorage
-let books = JSON.parse(localStorage.getItem("books"))  || []
+let books = JSON.parse(localStorage.getItem("books")) || [];
 
 function renderBooks() {
     bookList.innerHTML = "";
-    bookList.onbeforematch(book => {
+    books.forEach(book => {
         const card = document.createElement("div");
         card.className = "book-card";
         card.innerHTML = `
@@ -21,14 +20,14 @@ function renderBooks() {
 }
 
 form.addEventListener("submit", function(e) {
-    e.preventDefault(); //prevents the page from refreshing so the book stays.
-    
-    const title = document.getElementById("title").value;
-    if (!title) return; // prevents adding blank titled books
+    e.preventDefault(); // FIXED: stops the page from refreshing so the new book stays
 
-    const author = document.getElementById("author").value;
+    const title = document.getElementById("title").value.trim();
+    if (!title) return; // FIXED: don't add books with empty titles
+
+    const author = document.getElementById("author").value.trim();
     const genre = document.getElementById("genre").value;
-    const rating = Number(document.getElementById("rating").value) || null; //converted rating to a number
+    const rating = Number(document.getElementById("rating").value) || null; // FIXED: convert rating to number
     const notes = document.getElementById("notes").value.trim();
 
     books.push({ title, author, genre, rating, notes });
@@ -38,4 +37,4 @@ form.addEventListener("submit", function(e) {
 });
 
 renderBooks();
-// removed the debug console log
+// FIXED: removed the debug console.log

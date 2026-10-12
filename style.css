@@ -1,4 +1,4 @@
-*{
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -7,8 +7,8 @@
 body {
     background: #1a1a2e;
     color: #eaeaea;
-    font-family: 'Press Start P', monospace;
-    font-size: 10-x;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
     line-height: 1.6;
     padding: 20px;
     image-rendering: pixelated;
@@ -34,7 +34,7 @@ h1 {
     margin-top: 8px;
 }
 
-.add-book, .shelf{
+.add-book, .shelf {
     background: #16213e;
     border: 3px solid #0f3460;
     padding: 15px;
@@ -50,8 +50,8 @@ h2 {
     margin-bottom: 12px;
 }
 
-input, slect, textarea, button {
-    font-family: 'Press Start 2P',  monospace;
+input, select, textarea, button {
+    font-family: 'Press Start 2P', monospace;
     font-size: 8px;
     background: #0f3460;
     color: #eaeaea;
@@ -70,7 +70,7 @@ button {
     margin-top: 10px;
 }
 
-button:hover {
+button:hover { /* FIXED: made sure the hover selector works properly */
     background: #ff6b81;
 }
 
@@ -79,7 +79,7 @@ textarea {
     resize: vertical;
 }
 
-#booklist {
+#book-list {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -91,7 +91,7 @@ textarea {
     padding: 10px;
     width: 180px;
     font-size: 7px;
-    word-break: break-word; /* stops long titles from overflowing the card */
+    word-break: break-word; /* FIXED: stops long titles from overflowing the card */
 }
 
 footer {

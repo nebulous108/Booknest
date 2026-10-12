@@ -1,52 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BookNest</title>
-        <!-- pixel font -->
-         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2p&display=swap" rel="stylesheet">
-         <link rel="stylesheet" href="style.css">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookNest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>BookNest</h1>
+        <p class="tagline">my reading shelf</p>
+    </header>
 
-    <body>
-        <header>
-            <h1>BookNest</h1>
-            <p> class="tagline>my reading shelf</p>
-        </header>
+    <main>
+        <section class="add-book">
+            <h2>add a book</h2>
+            <form id="book-form">
+                <input type="text" id="title" placeholder="title" required>
+                <input type="text" id="author" placeholder="author">
+                <select id="genre">
+                    <option value="">genre</option>
+                    <option>fantasy</option>
+                    <option>sci-fi</option>
+                    <option>mystery</option>
+                    <option>realistic</option>
+                    <option>other</option>
+                </select>
+                <input type="number" id="rating" min="1" max="5" placeholder="rating 1-5">
+                <textarea id="notes" placeholder="quick notes / review"></textarea>
+                <button type="submit">add to shelf</button>
+            </form> <!-- FIXED: added missing </form> so the shelf isn't nested inside the form -->
+        </section>
 
-        <main>
-            <section class="add-ook">
-                <h2>add a book</h2>
-                <form id="book-form">
-                    <input type="text" id="title" placeholder="title" required>
-                    <input type="text" id="author"   placeholder="author">
-                    <select id="genre">
-                        <option value="">genre</option>
-                        <option>fantasy</option>
-                        <option>mystery</option>
-                        <option>realistic</option>
-                        <option>other</option>
-                    </select>
-                    <input type="number" id="rating" min="1" max="5" placeholder="rating 1-5">
-                    <textarea id=""notes" placeholder="quick notes / review"></textarea>
-                    <button type=""submit>add to shelf</button>
-                </form> <!--fixed the missing </form>-->
-            </section>
+        <section class="shelf">
+            <h2>your shelf</h2>
+            <div id="book-list">
+                <!-- books go here -->
+            </div>
+        </section>
+    </main>
 
-            <section class=""shelf">
-                <h2>your shelf</h2>
-                <div id="book-list">
-                    <!-- books go here -->
-                </div>
-            </section>
-        </main>
+    <footer>
+        <p>made by me • 2026</p>
+    </footer>
 
-        <footer>
-            <p>made by Nebulous • 2026</p>
-        </footer>
-
-        <script src="script.js"></script>
-    </body>
+    <script src="script.js"></script>
+</body>
 </html>
-
