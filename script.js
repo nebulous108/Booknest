@@ -3,19 +3,21 @@ const bookList = document.getElementById("book-list");
 const modal = document.getElementById("detail-modal");
 const closeModal = document.getElementById("close-modal");
 const deleteBtn = document.getElementById("delete-book");
-const editBtn = document.getElementById("edit-book");          
-const cancelEditBtn = document.getElementById("cancel-edit");  
-const formTitle = document.getElementById("form-title");      
-const submitBtn = document.getElementById("submit-btn");       
-const searchBar = document.getElementById("search-bar"); // NEW: added search bar
+const editBtn = document.getElementById("edit-book");
+const cancelEditBtn = document.getElementById("cancel-edit");
+const formTitle = document.getElementById("form-title");
+const submitBtn = document.getElementById("submit-btn");
+const searchBar = document.getElementById("search-bar");
+const searchFilter = document.getElementById("search-filter"); // SEARCH FILTER
 
 let books = JSON.parse(localStorage.getItem("books")) || [];
 let currentIndex = null;
 let editingIndex = null;
 
-function renderBooks(booksToShow = books) { // Search: now accepts a filtered list
+function renderBooks(booksToShow = books) {
     bookList.innerHTML = "";
-    booksToShow.forEach((book, index) => {
+
+    booksToShow.forEach((book) => {
         const card = document.createElement("div");
         card.className = "book-card";
         card.innerHTML = `
@@ -24,8 +26,14 @@ function renderBooks(booksToShow = books) { // Search: now accepts a filtered li
             ${book.genre || ""}<br>
             rating: ${book.rating || "-"}/5
         `;
-        // Find the real index in the full books array (important for edit/delete)
-        const realIndex = books.findIndex(b => b.title === book.title &&  b.author ===  book.author);
+
+        // Find the real index in the original books array
+        const realIndex = books.findIndex(b => 
+            b.title === book.title && 
+            b.author === book.author && 
+            b.rating === book.rating
+        );
+
         card.addEventListener("click", () => openDetail(realIndex));
         bookList.appendChild(card);
     });
@@ -47,7 +55,7 @@ function closeDetail() {
     currentIndex = null;
 }
 
-function startEdit(index) {  // NEW: function that fills the form for editing
+function startEdit(index) {
     const book = books[index];
     editingIndex = index;
 
@@ -65,30 +73,47 @@ function startEdit(index) {  // NEW: function that fills the form for editing
     form.scrollIntoView({ behavior: "smooth" });
 }
 
-function cancelEdit() {  
+function cancelEdit() {
     editingIndex = null;
     form.reset();
-    formTitle.textContent = "add a book";
-    submitBtn.textContent = "add to shelf";
+    formTitle.textContent = "Add any book";
+    submitBtn.textContent = "Add to shelf";
     cancelEditBtn.classList.add("hidden");
 }
 
-// NEW: search function
-searchBar.addEventListener("input", function() {
+// SEARCH FUNCTION
+function doSearch() {
     const searchTerm = searchBar.value.toLowerCase().trim();
+    const filter = searchFilter.value;
 
     if (searchTerm === "") {
-        renderBooks ();
+        renderBooks();
         return;
     }
 
     const filtered = books.filter(book => {
-        return (book.title && book.title.toLowerCase().includes(searchTerm)) ||
-        (book.author && book.author.toLowerCase().includes(searchTerm));
+        if (filter === "title") {
+            return book.title && book.title.toLowerCase().includes(searchTerm);
+        }
+        if (filter === "author") {
+            return book.author && book.author.toLowerCase().includes(searchTerm);
+        }
+        if (filter === "genre") {
+            return book.genre && book.genre.toLowerCase().includes(searchTerm);
+        }
+        // all
+        return (
+            (book.title && book.title.toLowerCase().includes(searchTerm)) ||
+            (book.author && book.author.toLowerCase().includes(searchTerm)) ||
+            (book.genre && book.genre.toLowerCase().includes(searchTerm))
+        );
     });
 
     renderBooks(filtered);
-});
+}
+
+searchBar.addEventListener("input", doSearch);
+searchFilter.addEventListener("change", doSearch); // re-search when filter changes
 
 closeModal.addEventListener("click", closeDetail);
 
@@ -98,16 +123,17 @@ deleteBtn.addEventListener("click", () => {
         localStorage.setItem("books", JSON.stringify(books));
         renderBooks();
         closeDetail();
+        searchBar.value = "";
     }
 });
 
-editBtn.addEventListener("click", () => {  // NEW
+editBtn.addEventListener("click", () => {
     if (currentIndex !== null) {
         startEdit(currentIndex);
     }
 });
 
-cancelEditBtn.addEventListener("click", cancelEdit);  // NEW
+cancelEditBtn.addEventListener("click", cancelEdit);
 
 form.addEventListener("submit", function(e) {
     e.preventDefault();
@@ -123,11 +149,10 @@ form.addEventListener("submit", function(e) {
     const bookData = { title, author, genre, rating, notes };
 
     if (editingIndex !== null) {
-        // NEW: update existing book
         books[editingIndex] = bookData;
         editingIndex = null;
-        formTitle.textContent = "add a book";
-        submitBtn.textContent = "add to shelf";
+        formTitle.textContent = "Add any book";
+        submitBtn.textContent = "Add to shelf";
         cancelEditBtn.classList.add("hidden");
     } else {
         books.push(bookData);
@@ -136,7 +161,7 @@ form.addEventListener("submit", function(e) {
     localStorage.setItem("books", JSON.stringify(books));
     renderBooks();
     form.reset();
-    searchBar.value = ""; // clear search after adding/editing
+    searchBar.value = "";
 });
 
 modal.addEventListener("click", (e) => {

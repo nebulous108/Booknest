@@ -8,7 +8,7 @@ body {
     background: #1a1a2e;
     color: #eaeaea;
     font-family: 'Press Start 2P', monospace;
-    font-size: 14px; /* bigger base size */
+    font-size: 14px;
     line-height: 1.8;
     padding: 24px;
     image-rendering: pixelated;
@@ -52,7 +52,7 @@ h2 {
 
 input, select, textarea, button {
     font-family: 'Press Start 2P', monospace;
-    font-size: 12px; /* bigger and more readable to the eye */
+    font-size: 12px;
     background: #0f3460;
     color: #eaeaea;
     border: 3px solid #e94560;
@@ -77,6 +77,24 @@ button:hover {
 textarea {
     height: 90px;
     resize: vertical;
+}
+
+/* SEARCH AREA STYLING */
+.search-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.search-area input {
+    flex: 1;
+    margin: 0;
+}
+
+.search-area select {
+    width: 140px;
+    margin: 0;
+    flex-shrink: 0;
 }
 
 #book-list {
@@ -149,12 +167,10 @@ footer {
     color: #0f3460;
 }
 
-/* New: hide cancel button by default */
 .hidden {
     display: none;
 }
 
-/* New: small style so the two buttons in the form sit nicer */
 #cancel-edit {
     background: #0f3460;
     color: #eaeaea;
