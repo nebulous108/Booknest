@@ -1,78 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BookNest</title>
-        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <header>
-            <h1>BookNest</h1>
-            <p class="tagline">My reading shelf</p>
-        </header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookNest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>BookNest</h1>
+        <p class="tagline">My reading shelf</p>
+    </header>
 
-        <main>
-            <section class="add-book">
-                <h2 id="form-title">Add any book</h2>
-                <form id="book-form">
-                    <input type="text" id="title" placeholder="title" required>
-                    <input type="text" id="author" placeholder="author" required>
-                    <select id="genre">
-                        <option value="">Genre</option>
-                        <option>Sci-Fi</option>
-                        <option>Mystery</option>
-                        <option>Realistic</option>
-                        <option>Dystopian</option>
-                        <option>Action</option>
-                        <option>Fantasy</option>
-                        <option>Romance</option>
-                        <option>Sport</option>
-                        <option>Other</option>
-                    </select>
-                    <input type="number" id="rating" min="1" max="5" placeholder="Your rating (1-5)" required>
-                    <textarea id="notes" placeholder="Quick notes / Review"></textarea>
-                    <button type="submit" id="submit-btn">Add to shelf</button>
-                    <button type="button" id="cancel-edit" class="hidden">Cancel edits</button>
-                </form>
-            </section>
+    <main>
+        <section class="add-book">
+            <h2 id="form-title">Add any book</h2>
+            <form id="book-form">
+                <input type="text" id="title" placeholder="Title" required>
+                <input type="text" id="author" placeholder="Author" required>
+                <select id="genre">
+                    <option value="">Genre</option>
+                    <option>Sci-Fi</option>
+                    <option>Mystery</option>
+                    <option>Realistic</option>
+                    <option>Dystopian</option>
+                    <option>Action</option>
+                    <option>Fantasy</option>
+                    <option>Romance</option>
+                    <option>Sport</option>
+                    <option>Other</option>
+                </select>
+                <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)" required>
+                <textarea id="notes" placeholder="Quick notes / Review"></textarea>
+                <button type="submit" id="submit-btn">Add to shelf</button>
+                <button type="button" id="cancel-edit" class="hidden">Cancel edits</button>
+            </form>
+        </section>
 
-            <section class="shelf">
-                <h2>Your shelf</h2>
+        <section class="shelf">
+            <h2>Your shelf</h2>
 
-                <!-- SEARCH AREA -->
-                <div class="search-area">
-                    <input type="text" id="search-bar" placeholder="Search your shelf...">
-                    <select id="search-filter">
-                        <option value="all">All</option>
-                        <option value="title">Title</option>
-                        <option value="author">Author</option>
-                        <option value="genre">Genre</option>
-                    </select>
-                </div>
+            <div class="search-area">
+                <input type="text" id="search-bar" placeholder="Search your shelf...">
+                <select id="search-filter">
+                    <option value="all">All</option>
+                    <option value="title">Title</option>
+                    <option value="author">Author</option>
+                    <option value="genre">Genre</option>
+                </select>
+            </div>
 
-                <div id="book-list"></div>
-            </section>
-        </main>
-        
-        <div id="detail-modal" class="modal hidden">
-            <div class="modal-content">
-                <button id="close-modal">close</button>
-                <h3 id="detail-title"></h3>
-                <p id="detail-author"></p>
-                <p id="detail-genre"></p>
-                <p id="detail-rating"></p>
-                <p id="detail-notes"></p>
+            <div id="book-list"></div>
+            <p id="empty-message" class="empty hidden">No books match your search.</p>
+        </section>
+    </main>
+
+    <div id="detail-modal" class="modal hidden">
+        <div class="modal-content">
+            <button id="close-modal">Close</button>
+            <h3 id="detail-title"></h3>
+            <p id="detail-author"></p>
+            <p id="detail-genre"></p>
+            <p id="detail-rating"></p>
+            <p id="detail-notes"></p>
+            <div class="modal-buttons">
                 <button id="edit-book">Edit this book</button>
                 <button id="delete-book">Delete this book</button>
             </div>
         </div>
+    </div>
 
-        <footer>
-            <p>Made by Nebulous • October 2026</p>
-        </footer>
+    <footer>
+        <p>Made by Nebulous • October 2026</p>
+    </footer>
 
-        <script src="script.js"></script>
-    </body>
+    <script src="script.js"></script>
+</body>
 </html>

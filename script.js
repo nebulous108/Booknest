@@ -8,7 +8,8 @@ const cancelEditBtn = document.getElementById("cancel-edit");
 const formTitle = document.getElementById("form-title");
 const submitBtn = document.getElementById("submit-btn");
 const searchBar = document.getElementById("search-bar");
-const searchFilter = document.getElementById("search-filter"); // SEARCH FILTER
+const searchFilter = document.getElementById("search-filter");
+const emptyMessage = document.getElementById("empty-message");
 
 let books = JSON.parse(localStorage.getItem("books")) || [];
 let currentIndex = null;
@@ -17,20 +18,26 @@ let editingIndex = null;
 function renderBooks(booksToShow = books) {
     bookList.innerHTML = "";
 
+    if (booksToShow.length === 0) {
+        emptyMessage.classList.remove("hidden");
+        return;
+    }
+
+    emptyMessage.classList.add("hidden");
+
     booksToShow.forEach((book) => {
         const card = document.createElement("div");
         card.className = "book-card";
         card.innerHTML = `
-            <strong>${book.title}</strong><br>
+            <strong>${book.title}</strong>
             by ${book.author || "unknown"}<br>
-            ${book.genre || ""}<br>
-            rating: ${book.rating || "-"}/5
+            ${book.genre || "No genre"}<br>
+            Rating: ${book.rating || "-"}/5
         `;
 
-        // Find the real index in the original books array
-        const realIndex = books.findIndex(b => 
-            b.title === book.title && 
-            b.author === book.author && 
+        const realIndex = books.findIndex(b =>
+            b.title === book.title &&
+            b.author === book.author &&
             b.rating === book.rating
         );
 
@@ -44,9 +51,9 @@ function openDetail(index) {
     const book = books[index];
     document.getElementById("detail-title").textContent = book.title;
     document.getElementById("detail-author").textContent = "by " + (book.author || "unknown");
-    document.getElementById("detail-genre").textContent = book.genre || "no genre";
-    document.getElementById("detail-rating").textContent = "rating: " + (book.rating || "-") + "/5";
-    document.getElementById("detail-notes").textContent = book.notes || "no notes";
+    document.getElementById("detail-genre").textContent = book.genre || "No genre";
+    document.getElementById("detail-rating").textContent = "Rating: " + (book.rating || "-") + "/5";
+    document.getElementById("detail-notes").textContent = book.notes || "No notes";
     modal.classList.remove("hidden");
 }
 
@@ -65,8 +72,8 @@ function startEdit(index) {
     document.getElementById("rating").value = book.rating || "";
     document.getElementById("notes").value = book.notes || "";
 
-    formTitle.textContent = "edit book";
-    submitBtn.textContent = "save changes";
+    formTitle.textContent = "Edit book";
+    submitBtn.textContent = "Save changes";
     cancelEditBtn.classList.remove("hidden");
 
     closeDetail();
@@ -81,7 +88,6 @@ function cancelEdit() {
     cancelEditBtn.classList.add("hidden");
 }
 
-// SEARCH FUNCTION
 function doSearch() {
     const searchTerm = searchBar.value.toLowerCase().trim();
     const filter = searchFilter.value;
@@ -101,7 +107,6 @@ function doSearch() {
         if (filter === "genre") {
             return book.genre && book.genre.toLowerCase().includes(searchTerm);
         }
-        // all
         return (
             (book.title && book.title.toLowerCase().includes(searchTerm)) ||
             (book.author && book.author.toLowerCase().includes(searchTerm)) ||
@@ -113,7 +118,7 @@ function doSearch() {
 }
 
 searchBar.addEventListener("input", doSearch);
-searchFilter.addEventListener("change", doSearch); // re-search when filter changes
+searchFilter.addEventListener("change", doSearch);
 
 closeModal.addEventListener("click", closeDetail);
 
