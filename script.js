@@ -15,6 +15,17 @@ let books = JSON.parse(localStorage.getItem("books")) || [];
 let currentIndex = null;
 let editingIndex = null;
 
+function getSelectedTags() {
+    const checkboxes = document.querySelectorAll('input[name="tags"]:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+}
+
+function setSelectedTags(tags = []) {
+    document.querySelectorAll('input[name="tags"]').forEach(cb => {
+        cb.checked = tags.includes(cb.value);
+    });
+}
+
 function renderBooks(booksToShow = books) {
     bookList.innerHTML = "";
 
@@ -29,7 +40,6 @@ function renderBooks(booksToShow = books) {
         const card = document.createElement("div");
         card.className = "book-card";
 
-        // TAGS DISPLAY
         const tagsHtml = book.tags && book.tags.length
             ? `<div class="tags">${book.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>`
             : "";
@@ -60,7 +70,6 @@ function openDetail(index) {
     document.getElementById("detail-author").textContent = "by " + (book.author || "unknown");
     document.getElementById("detail-genre").textContent = book.genre || "No genre";
     document.getElementById("detail-rating").textContent = "Rating: " + (book.rating || "-") + "/5";
-    // TAGS IN MODAL
     document.getElementById("detail-tags").textContent = book.tags && book.tags.length
         ? "Tags: " + book.tags.join(", ")
         : "No tags";
@@ -81,8 +90,7 @@ function startEdit(index) {
     document.getElementById("author").value = book.author || "";
     document.getElementById("genre").value = book.genre || "";
     document.getElementById("rating").value = book.rating || "";
-    // TAGS WHEN EDITING
-    document.getElementById("tags").value = book.tags ? book.tags.join(", ") : "";
+    setSelectedTags(book.tags || []);
     document.getElementById("notes").value = book.notes || "";
 
     formTitle.textContent = "Edit book";
@@ -96,6 +104,7 @@ function startEdit(index) {
 function cancelEdit() {
     editingIndex = null;
     form.reset();
+    setSelectedTags([]);
     formTitle.textContent = "Add any book";
     submitBtn.textContent = "Add to shelf";
     cancelEditBtn.classList.add("hidden");
@@ -120,11 +129,9 @@ function doSearch() {
         if (filter === "genre") {
             return book.genre && book.genre.toLowerCase().includes(searchTerm);
         }
-        // TAGS FILTER
         if (filter === "tags") {
             return book.tags && book.tags.some(tag => tag.toLowerCase().includes(searchTerm));
         }
-        // all (includes tags)
         return (
             (book.title && book.title.toLowerCase().includes(searchTerm)) ||
             (book.author && book.author.toLowerCase().includes(searchTerm)) ||
@@ -169,12 +176,7 @@ form.addEventListener("submit", function(e) {
     const genre = document.getElementById("genre").value;
     const rating = Number(document.getElementById("rating").value) || null;
     const notes = document.getElementById("notes").value.trim();
-
-    // PARSE TAGS
-    const tagsInput = document.getElementById("tags").value.trim();
-    const tags = tagsInput
-        ? tagsInput.split(",").map(tag => tag.trim()).filter(tag => tag)
-        : [];
+    const tags = getSelectedTags();
 
     const bookData = { title, author, genre, rating, notes, tags };
 
@@ -191,6 +193,7 @@ form.addEventListener("submit", function(e) {
     localStorage.setItem("books", JSON.stringify(books));
     renderBooks();
     form.reset();
+    setSelectedTags([]);
     searchBar.value = "";
 });
 

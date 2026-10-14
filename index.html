@@ -32,8 +32,17 @@
                     <option>Other</option>
                 </select>
                 <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)" required>
-                <!-- TAGS INPUT -->
-                <input type="text" id="tags" placeholder="Tags (comma separated, e.g. Favorites, Reread)">
+
+                <!-- TAGS AS CHECKBOXES -->
+                <div class="tags-selector">
+                    <p class="tags-label">Tags</p>
+                    <label><input type="checkbox" name="tags" value="Favorites"> Favorites</label>
+                    <label><input type="checkbox" name="tags" value="Reread"> Reread</label>
+                    <label><input type="checkbox" name="tags" value="School"> School</label>
+                    <label><input type="checkbox" name="tags" value="Finished"> Finished</label>
+                    <label><input type="checkbox" name="tags" value="Currently Reading"> Currently Reading</label>
+                </div>
+
                 <textarea id="notes" placeholder="Quick notes / Review"></textarea>
                 <button type="submit" id="submit-btn">Add to shelf</button>
                 <button type="button" id="cancel-edit" class="hidden">Cancel edits</button>
@@ -50,7 +59,6 @@
                     <option value="title">Title</option>
                     <option value="author">Author</option>
                     <option value="genre">Genre</option>
-                    <!-- TAGS FILTER -->
                     <option value="tags">Tags</option>
                 </select>
             </div>
@@ -67,7 +75,7 @@
             <p id="detail-author"></p>
             <p id="detail-genre"></p>
             <p id="detail-rating"></p>
-            <p id="detail-tags"></p> <!-- TAGS IN MODAL -->
+            <p id="detail-tags"></p>
             <p id="detail-notes"></p>
             <div class="modal-buttons">
                 <button id="edit-book">Edit this book</button>
