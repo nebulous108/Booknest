@@ -89,7 +89,6 @@ button:hover {
 textarea {
     height: 100px;
     resize: vertical;
-    font-family: 'Inter', system-ui, sans-serif;
 }
 
 .search-area {
@@ -139,6 +138,23 @@ textarea {
     border-color: #ff6b81;
 }
 
+/* TAGS STYLING */
+.tags {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag {
+    background: #e94560;
+    color: #1a1a2e;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
 .empty {
     text-align: center;
     color: #8b9dc3;
@@ -150,7 +166,6 @@ textarea {
     display: none;
 }
 
-/* Modal */
 .modal {
     position: fixed;
     top: 0;
@@ -188,7 +203,6 @@ textarea {
 
 .modal-content p {
     margin: 8px 0;
-    color: #eaeaea;
 }
 
 .modal-buttons {
@@ -224,7 +238,6 @@ footer {
     background: #16213e;
 }
 
-/* Desktop layout */
 @media (min-width: 860px) {
     body {
         padding: 32px;

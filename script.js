@@ -28,11 +28,18 @@ function renderBooks(booksToShow = books) {
     booksToShow.forEach((book) => {
         const card = document.createElement("div");
         card.className = "book-card";
+
+        // TAGS DISPLAY
+        const tagsHtml = book.tags && book.tags.length
+            ? `<div class="tags">${book.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>`
+            : "";
+
         card.innerHTML = `
             <strong>${book.title}</strong>
             by ${book.author || "unknown"}<br>
             ${book.genre || "No genre"}<br>
             Rating: ${book.rating || "-"}/5
+            ${tagsHtml}
         `;
 
         const realIndex = books.findIndex(b =>
@@ -53,6 +60,10 @@ function openDetail(index) {
     document.getElementById("detail-author").textContent = "by " + (book.author || "unknown");
     document.getElementById("detail-genre").textContent = book.genre || "No genre";
     document.getElementById("detail-rating").textContent = "Rating: " + (book.rating || "-") + "/5";
+    // TAGS IN MODAL
+    document.getElementById("detail-tags").textContent = book.tags && book.tags.length
+        ? "Tags: " + book.tags.join(", ")
+        : "No tags";
     document.getElementById("detail-notes").textContent = book.notes || "No notes";
     modal.classList.remove("hidden");
 }
@@ -70,6 +81,8 @@ function startEdit(index) {
     document.getElementById("author").value = book.author || "";
     document.getElementById("genre").value = book.genre || "";
     document.getElementById("rating").value = book.rating || "";
+    // TAGS WHEN EDITING
+    document.getElementById("tags").value = book.tags ? book.tags.join(", ") : "";
     document.getElementById("notes").value = book.notes || "";
 
     formTitle.textContent = "Edit book";
@@ -107,10 +120,16 @@ function doSearch() {
         if (filter === "genre") {
             return book.genre && book.genre.toLowerCase().includes(searchTerm);
         }
+        // TAGS FILTER
+        if (filter === "tags") {
+            return book.tags && book.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+        }
+        // all (includes tags)
         return (
             (book.title && book.title.toLowerCase().includes(searchTerm)) ||
             (book.author && book.author.toLowerCase().includes(searchTerm)) ||
-            (book.genre && book.genre.toLowerCase().includes(searchTerm))
+            (book.genre && book.genre.toLowerCase().includes(searchTerm)) ||
+            (book.tags && book.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
         );
     });
 
@@ -151,7 +170,13 @@ form.addEventListener("submit", function(e) {
     const rating = Number(document.getElementById("rating").value) || null;
     const notes = document.getElementById("notes").value.trim();
 
-    const bookData = { title, author, genre, rating, notes };
+    // PARSE TAGS
+    const tagsInput = document.getElementById("tags").value.trim();
+    const tags = tagsInput
+        ? tagsInput.split(",").map(tag => tag.trim()).filter(tag => tag)
+        : [];
+
+    const bookData = { title, author, genre, rating, notes, tags };
 
     if (editingIndex !== null) {
         books[editingIndex] = bookData;
