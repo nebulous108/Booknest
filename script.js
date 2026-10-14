@@ -2,7 +2,10 @@ import {
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
     signOut, 
-    onAuthStateChanged 
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    GithubAuthProvider,
+    signInWithPopup
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
 
 import { 
@@ -31,22 +34,25 @@ const submitBtn = document.getElementById("submit-btn");
 const searchBar = document.getElementById("search-bar");
 const searchFilter = document.getElementById("search-filter");
 const emptyMessage = document.getElementById("empty-message");
+const loginOverlay = document.getElementById("login-overlay");
+const loginOpenBtn = document.getElementById("login-open-btn");
+const loginCloseBtn = document.getElementById("login-close-btn");
 
 let books = [];
 let currentIndex = null;
 let editingIndex = null;
 let currentUser = null;
 
-// Watch login state
 onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     if (user) {
-        document.getElementById("login-form").classList.add("hidden");
+        document.getElementById("login-open-btn").classList.add("hidden");
         document.getElementById("user-info").classList.remove("hidden");
-        document.getElementById("user-email").textContent = user.email;
+        document.getElementById("user-email").textContent = user.email || user.displayName || "Logged in";
+        loginOverlay.classList.add("hidden");
         await loadBooks();
     } else {
-        document.getElementById("login-form").classList.remove("hidden");
+        document.getElementById("login-open-btn").classList.remove("hidden");
         document.getElementById("user-info").classList.add("hidden");
         books = [];
         renderBooks();
@@ -238,12 +244,28 @@ form.addEventListener("submit", async function(e) {
     searchBar.value = "";
 });
 
+// Login overlay controls
+loginOpenBtn.addEventListener("click", () => {
+    loginOverlay.classList.remove("hidden");
+});
+
+loginCloseBtn.addEventListener("click", () => {
+    loginOverlay.classList.add("hidden");
+});
+
+loginOverlay.addEventListener("click", (e) => {
+    if (e.target === loginOverlay) {
+        loginOverlay.classList.add("hidden");
+    }
+});
+
 // Auth buttons
 document.getElementById("login-btn").addEventListener("click", async () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     try {
         await signInWithEmailAndPassword(auth, email, password);
+        loginOverlay.classList.add("hidden");
     } catch (err) {
         alert(err.message);
     }
@@ -254,6 +276,27 @@ document.getElementById("signup-btn").addEventListener("click", async () => {
     const password = document.getElementById("password").value;
     try {
         await createUserWithEmailAndPassword(auth, email, password);
+        loginOverlay.classList.add("hidden");
+    } catch (err) {
+        alert(err.message);
+    }
+});
+
+document.getElementById("google-btn").addEventListener("click", async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+        await signInWithPopup(auth, provider);
+        loginOverlay.classList.add("hidden");
+    } catch (err) {
+        alert(err.message);
+    }
+});
+
+document.getElementById("github-btn").addEventListener("click", async () => {
+    const provider = new GithubAuthProvider();
+    try {
+        await signInWithPopup(auth, provider);
+        loginOverlay.classList.add("hidden");
     } catch (err) {
         alert(err.message);
     }
