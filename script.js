@@ -24,6 +24,7 @@ const db = window.db;
 
 const form = document.getElementById("book-form");
 const modal = document.getElementById("detail-modal");
+const submitBtn = document.getElementById("submit-btn");
 
 let books = [];
 let currentIndex = null;
@@ -169,29 +170,56 @@ form.onsubmit = async (e) => {
 
     if (!data.title) return;
 
-    if (editingIndex !== null) {
-        await updateDoc(doc(db, "books", books[editingIndex].id), data);
-        books[editingIndex] = { id: books[editingIndex].id, ...data };
-        editingIndex = null;
-        document.getElementById("form-title").textContent = "Add any book";
-    } else {
-        const ref = await addDoc(collection(db, "books"), data);
-        books.push({ id: ref.id, ...data });
-    }
+    // Loading state
+    submitBtn.disabled = true;
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = "Saving...";
 
-    form.reset();
-    setSelectedTags([]);
-    renderAllSections();
-    updateStats();
+    try {
+        if (editingIndex !== null) {
+            await updateDoc(doc(db, "books", books[editingIndex].id), data);
+            books[editingIndex] = { id: books[editingIndex].id, ...data };
+            editingIndex = null;
+            document.getElementById("form-title").textContent = "Add any book";
+            submitBtn.textContent = "Add to shelf";
+        } else {
+            const ref = await addDoc(collection(db, "books"), data);
+            books.push({ id: ref.id, ...data });
+        }
+
+        form.reset();
+        setSelectedTags([]);
+        renderAllSections();
+        updateStats();
+    } catch (err) {
+        alert("Failed to save: " + err.message);
+    } finally {
+        submitBtn.disabled = false;
+        if (editingIndex === null) {
+            submitBtn.textContent = "Add to shelf";
+        }
+    }
 };
 
 document.getElementById("delete-book").onclick = async () => {
     if (currentIndex == null) return;
-    await deleteDoc(doc(db, "books", books[currentIndex].id));
-    books.splice(currentIndex, 1);
-    modal.classList.add("hidden");
-    renderAllSections();
-    updateStats();
+
+    const deleteBtn = document.getElementById("delete-book");
+    deleteBtn.disabled = true;
+    deleteBtn.textContent = "Deleting...";
+
+    try {
+        await deleteDoc(doc(db, "books", books[currentIndex].id));
+        books.splice(currentIndex, 1);
+        modal.classList.add("hidden");
+        renderAllSections();
+        updateStats();
+    } catch (err) {
+        alert("Failed to delete: " + err.message);
+    } finally {
+        deleteBtn.disabled = false;
+        deleteBtn.textContent = "Delete";
+    }
 };
 
 document.getElementById("edit-book").onclick = () => {
@@ -205,6 +233,7 @@ document.getElementById("edit-book").onclick = () => {
     document.getElementById("date-finished").value = b.dateFinished || "";
     setSelectedTags(b.tags || []);
     document.getElementById("form-title").textContent = "Edit book";
+    document.getElementById("submit-btn").textContent = "Save changes";
     modal.classList.add("hidden");
 };
 
