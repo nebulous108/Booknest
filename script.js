@@ -169,10 +169,8 @@ form.onsubmit = async (e) => {
     };
 
     if (!data.title) return;
-
-    // Loading state
+        
     submitBtn.disabled = true;
-    const originalText = submitBtn.textContent;
     submitBtn.textContent = "Saving...";
 
     try {
@@ -181,7 +179,6 @@ form.onsubmit = async (e) => {
             books[editingIndex] = { id: books[editingIndex].id, ...data };
             editingIndex = null;
             document.getElementById("form-title").textContent = "Add any book";
-            submitBtn.textContent = "Add to shelf";
         } else {
             const ref = await addDoc(collection(db, "books"), data);
             books.push({ id: ref.id, ...data });
@@ -195,9 +192,7 @@ form.onsubmit = async (e) => {
         alert("Failed to save: " + err.message);
     } finally {
         submitBtn.disabled = false;
-        if (editingIndex === null) {
-            submitBtn.textContent = "Add to shelf";
-        }
+        submitBtn.textContent = editingIndex !== null ? "Save changes" : "Add to shelf";
     }
 };
 
@@ -238,13 +233,36 @@ document.getElementById("edit-book").onclick = () => {
 };
 
 document.getElementById("close-modal").onclick = () => modal.classList.add("hidden");
-document.getElementById("login-open-btn").onclick = () => document.getElementById("login-overlay").classList.remove("hidden");
-document.getElementById("login-close-btn").onclick = () => document.getElementById("login-overlay").classList.add("hidden");
+
+// Fixed login overlay controls
+const loginOpenBtn = document.getElementById("login-open-btn");
+const loginOverlay = document.getElementById("login-overlay");
+const loginCloseBtn = document.getElementById("login-close-btn");
+
+if (loginOpenBtn && loginOverlay) {
+    loginOpenBtn.addEventListener("click", () => {
+        loginOverlay.classList.remove("hidden");
+    });
+}
+
+if (loginCloseBtn && loginOverlay) {
+    loginCloseBtn.addEventListener("click", () => {
+        loginOverlay.classList.add("hidden");
+    });
+}
+
+if (loginOverlay) {
+    loginOverlay.addEventListener("click", (e) => {
+        if (e.target === loginOverlay) {
+            loginOverlay.classList.add("hidden");
+        }
+    });
+}
 
 document.getElementById("login-btn").onclick = async () => {
     try {
         await signInWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value);
-        document.getElementById("login-overlay").classList.add("hidden");
+        loginOverlay.classList.add("hidden");
     } catch (e) {
         alert(e.message);
     }
@@ -253,7 +271,7 @@ document.getElementById("login-btn").onclick = async () => {
 document.getElementById("signup-btn").onclick = async () => {
     try {
         await createUserWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value);
-        document.getElementById("login-overlay").classList.add("hidden");
+        loginOverlay.classList.add("hidden");
     } catch (e) {
         alert(e.message);
     }

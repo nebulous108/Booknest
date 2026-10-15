@@ -148,8 +148,8 @@
             <button type="button" id="login-btn">Log in</button>
             <button type="button" id="signup-btn">Sign up</button>
             <div class="divider">or</div>
-            <button type="button" id="google-btn" class="provider-btn">Google</button>
-            <button type="button" id="github-btn" class="provider-btn">GitHub</button>
+            <button type="button" id="google-btn" class="provider-btn">Continue with Google</button>
+            <button type="button" id="github-btn" class="provider-btn">Continue with GitHub</button>
         </div>
     </div>
 
@@ -163,7 +163,14 @@
         import { getFirestore } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            // paste your config here
+             apiKey: "AIzaSyAxmSjtoDEN6ISiEkV58d6kcFke4zbAGx0",
+             authDomain: "exolens-login.firebaseapp.com",
+             projectId: "exolens-login",
+             storageBucket: "exolens-login.firebasestorage.app",
+             messagingSenderId: "681324039728",
+             appId: "1:681324039728:web:8ca800589a5136477b67f5",
+             measurementId: "G-BVZ9EQ6XBT"
+
         };
 
         const app = initializeApp(firebaseConfig);
