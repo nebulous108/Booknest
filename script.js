@@ -2,10 +2,10 @@ import {
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
     signOut, 
-    onAuthStateChanged,
-    GoogleAuthProvider,
-    GithubAuthProvider,
-    signInWithPopup
+    onAuthStateChanged, 
+    GoogleAuthProvider, 
+    GithubAuthProvider, 
+    signInWithPopup 
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
 
 import { 
@@ -23,53 +23,41 @@ const auth = window.auth;
 const db = window.db;
 
 const form = document.getElementById("book-form");
-const bookList = document.getElementById("book-list");
 const modal = document.getElementById("detail-modal");
-const closeModal = document.getElementById("close-modal");
-const deleteBtn = document.getElementById("delete-book");
-const editBtn = document.getElementById("edit-book");
-const cancelEditBtn = document.getElementById("cancel-edit");
-const formTitle = document.getElementById("form-title");
-const submitBtn = document.getElementById("submit-btn");
-const searchBar = document.getElementById("search-bar");
-const searchFilter = document.getElementById("search-filter");
-const emptyMessage = document.getElementById("empty-message");
-const loginOverlay = document.getElementById("login-overlay");
-const loginOpenBtn = document.getElementById("login-open-btn");
-const loginCloseBtn = document.getElementById("login-close-btn");
 
 let books = [];
 let currentIndex = null;
 let editingIndex = null;
 let currentUser = null;
+let yearlyGoal = 0;
 
 onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     if (user) {
         document.getElementById("login-open-btn").classList.add("hidden");
         document.getElementById("user-info").classList.remove("hidden");
-        document.getElementById("user-email").textContent = user.email || user.displayName || "Logged in";
-        loginOverlay.classList.add("hidden");
+        document.getElementById("user-email").textContent = user.email || "Logged in";
         await loadBooks();
+        loadGoal();
     } else {
         document.getElementById("login-open-btn").classList.remove("hidden");
         document.getElementById("user-info").classList.add("hidden");
         books = [];
-        renderBooks();
+        renderAllSections();
     }
 });
 
 async function loadBooks() {
     if (!currentUser) return;
     const q = query(collection(db, "books"), where("userId", "==", currentUser.uid));
-    const snapshot = await getDocs(q);
-    books = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
-    renderBooks();
+    const snap = await getDocs(q);
+    books = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAllSections();
+    updateStats();
 }
 
 function getSelectedTags() {
-    const checkboxes = document.querySelectorAll('input[name="tags"]:checked');
-    return Array.from(checkboxes).map(cb => cb.value);
+    return Array.from(document.querySelectorAll('input[name="tags"]:checked')).map(cb => cb.value);
 }
 
 function setSelectedTags(tags = []) {
@@ -78,232 +66,170 @@ function setSelectedTags(tags = []) {
     });
 }
 
-function renderBooks(booksToShow = books) {
-    bookList.innerHTML = "";
+function createCard(book) {
+    const card = document.createElement("div");
+    card.className = "book-card";
+    const tagsHtml = book.tags && book.tags.length
+        ? `<div class="tags">${book.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>`
+        : "";
+    card.innerHTML = `
+        <strong>${book.title}</strong>
+        by ${book.author || "unknown"}<br>
+        ${book.genre || ""}<br>
+        Rating: ${book.rating || "-"}/5
+        ${tagsHtml}
+    `;
+    card.onclick = () => openDetail(books.findIndex(b => b.id === book.id));
+    return card;
+}
 
-    if (booksToShow.length === 0) {
-        emptyMessage.classList.remove("hidden");
-        return;
-    }
+function renderAllSections() {
+    const want = books.filter(b => b.tags && b.tags.includes("Want to Read"));
+    const current = books.filter(b => b.tags && b.tags.includes("Currently Reading"));
+    const finished = books.filter(b => b.tags && b.tags.includes("Finished"));
 
-    emptyMessage.classList.add("hidden");
+    document.getElementById("want-list").innerHTML = "";
+    document.getElementById("current-list").innerHTML = "";
+    document.getElementById("finished-list").innerHTML = "";
+    document.getElementById("all-list").innerHTML = "";
 
-    booksToShow.forEach((book) => {
-        const card = document.createElement("div");
-        card.className = "book-card";
-
-        const tagsHtml = book.tags && book.tags.length
-            ? `<div class="tags">${book.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>`
-            : "";
-
-        card.innerHTML = `
-            <strong>${book.title}</strong>
-            by ${book.author || "unknown"}<br>
-            ${book.genre || "No genre"}<br>
-            Rating: ${book.rating || "-"}/5
-            ${tagsHtml}
-        `;
-
-        const realIndex = books.findIndex(b => b.id === book.id);
-        card.addEventListener("click", () => openDetail(realIndex));
-        bookList.appendChild(card);
-    });
+    want.forEach(b => document.getElementById("want-list").appendChild(createCard(b)));
+    current.forEach(b => document.getElementById("current-list").appendChild(createCard(b)));
+    finished.forEach(b => document.getElementById("finished-list").appendChild(createCard(b)));
+    books.forEach(b => document.getElementById("all-list").appendChild(createCard(b)));
 }
 
 function openDetail(index) {
     currentIndex = index;
-    const book = books[index];
-    document.getElementById("detail-title").textContent = book.title;
-    document.getElementById("detail-author").textContent = "by " + (book.author || "unknown");
-    document.getElementById("detail-genre").textContent = book.genre || "No genre";
-    document.getElementById("detail-rating").textContent = "Rating: " + (book.rating || "-") + "/5";
-    document.getElementById("detail-tags").textContent = book.tags && book.tags.length
-        ? "Tags: " + book.tags.join(", ")
-        : "No tags";
-    document.getElementById("detail-notes").textContent = book.notes || "No notes";
+    const b = books[index];
+    document.getElementById("detail-title").textContent = b.title;
+    document.getElementById("detail-author").textContent = "by " + (b.author || "unknown");
+    document.getElementById("detail-genre").textContent = b.genre || "No genre";
+    document.getElementById("detail-rating").textContent = "Rating: " + (b.rating || "-") + "/5";
+    document.getElementById("detail-tags").textContent = b.tags && b.tags.length ? "Tags: " + b.tags.join(", ") : "No tags";
+    document.getElementById("detail-notes").textContent = b.notes || "No notes";
     modal.classList.remove("hidden");
 }
 
-function closeDetail() {
-    modal.classList.add("hidden");
-    currentIndex = null;
-}
+function updateStats() {
+    document.getElementById("total-books").textContent = books.length;
 
-function startEdit(index) {
-    const book = books[index];
-    editingIndex = index;
+    const year = new Date().getFullYear();
+    const thisYear = books.filter(b => b.dateFinished && new Date(b.dateFinished).getFullYear() === year).length;
+    document.getElementById("books-this-year").textContent = thisYear;
 
-    document.getElementById("title").value = book.title;
-    document.getElementById("author").value = book.author || "";
-    document.getElementById("genre").value = book.genre || "";
-    document.getElementById("rating").value = book.rating || "";
-    setSelectedTags(book.tags || []);
-    document.getElementById("notes").value = book.notes || "";
+    const rated = books.filter(b => b.rating);
+    document.getElementById("avg-rating").textContent = rated.length
+        ? (rated.reduce((s, b) => s + Number(b.rating), 0) / rated.length).toFixed(1)
+        : "-";
 
-    formTitle.textContent = "Edit book";
-    submitBtn.textContent = "Save changes";
-    cancelEditBtn.classList.remove("hidden");
-
-    closeDetail();
-    form.scrollIntoView({ behavior: "smooth" });
-}
-
-function cancelEdit() {
-    editingIndex = null;
-    form.reset();
-    setSelectedTags([]);
-    formTitle.textContent = "Add any book";
-    submitBtn.textContent = "Add to shelf";
-    cancelEditBtn.classList.add("hidden");
-}
-
-function doSearch() {
-    const searchTerm = searchBar.value.toLowerCase().trim();
-    const filter = searchFilter.value;
-
-    if (searchTerm === "") {
-        renderBooks();
-        return;
-    }
-
-    const filtered = books.filter(book => {
-        if (filter === "title") return book.title && book.title.toLowerCase().includes(searchTerm);
-        if (filter === "author") return book.author && book.author.toLowerCase().includes(searchTerm);
-        if (filter === "genre") return book.genre && book.genre.toLowerCase().includes(searchTerm);
-        if (filter === "tags") return book.tags && book.tags.some(tag => tag.toLowerCase().includes(searchTerm));
-        return (
-            (book.title && book.title.toLowerCase().includes(searchTerm)) ||
-            (book.author && book.author.toLowerCase().includes(searchTerm)) ||
-            (book.genre && book.genre.toLowerCase().includes(searchTerm)) ||
-            (book.tags && book.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
-        );
+    const genres = {};
+    books.forEach(b => {
+        if (b.genre) genres[b.genre] = (genres[b.genre] || 0) + 1;
     });
+    const top = Object.keys(genres).sort((a, b) => genres[b] - genres[a])[0] || "-";
+    document.getElementById("top-genre").textContent = top;
 
-    renderBooks(filtered);
+    if (yearlyGoal > 0) {
+        const pct = Math.min(100, Math.round((thisYear / yearlyGoal) * 100));
+        document.getElementById("progress-bar").style.width = pct + "%";
+        document.getElementById("goal-text").textContent = `${thisYear} / ${yearlyGoal} (${pct}%)`;
+    } else {
+        document.getElementById("progress-bar").style.width = "0%";
+        document.getElementById("goal-text").textContent = "No goal set";
+    }
 }
 
-searchBar.addEventListener("input", doSearch);
-searchFilter.addEventListener("change", doSearch);
+function loadGoal() {
+    yearlyGoal = Number(localStorage.getItem("goal_" + currentUser.uid)) || 0;
+    document.getElementById("goal-input").value = yearlyGoal || "";
+    updateStats();
+}
 
-closeModal.addEventListener("click", closeDetail);
+document.getElementById("save-goal").onclick = () => {
+    yearlyGoal = Number(document.getElementById("goal-input").value) || 0;
+    if (currentUser) localStorage.setItem("goal_" + currentUser.uid, yearlyGoal);
+    updateStats();
+};
 
-deleteBtn.addEventListener("click", async () => {
-    if (currentIndex !== null && currentUser) {
-        const bookId = books[currentIndex].id;
-        await deleteDoc(doc(db, "books", bookId));
-        books.splice(currentIndex, 1);
-        renderBooks();
-        closeDetail();
-        searchBar.value = "";
-    }
-});
-
-editBtn.addEventListener("click", () => {
-    if (currentIndex !== null) startEdit(currentIndex);
-});
-
-cancelEditBtn.addEventListener("click", cancelEdit);
-
-form.addEventListener("submit", async function(e) {
+form.onsubmit = async (e) => {
     e.preventDefault();
-    if (!currentUser) {
-        alert("Please log in first");
-        return;
-    }
+    if (!currentUser) return alert("Log in first");
 
-    const title = document.getElementById("title").value.trim();
-    if (!title) return;
-
-    const author = document.getElementById("author").value.trim();
-    const genre = document.getElementById("genre").value;
-    const rating = Number(document.getElementById("rating").value) || null;
-    const notes = document.getElementById("notes").value.trim();
-    const tags = getSelectedTags();
-
-    const bookData = { 
-        title, author, genre, rating, notes, tags, 
-        userId: currentUser.uid 
+    const data = {
+        title: document.getElementById("title").value.trim(),
+        author: document.getElementById("author").value.trim(),
+        genre: document.getElementById("genre").value,
+        rating: Number(document.getElementById("rating").value) || null,
+        notes: document.getElementById("notes").value.trim(),
+        tags: getSelectedTags(),
+        dateFinished: document.getElementById("date-finished").value || null,
+        userId: currentUser.uid
     };
 
+    if (!data.title) return;
+
     if (editingIndex !== null) {
-        const bookId = books[editingIndex].id;
-        await updateDoc(doc(db, "books", bookId), bookData);
-        books[editingIndex] = { id: bookId, ...bookData };
+        await updateDoc(doc(db, "books", books[editingIndex].id), data);
+        books[editingIndex] = { id: books[editingIndex].id, ...data };
         editingIndex = null;
-        formTitle.textContent = "Add any book";
-        submitBtn.textContent = "Add to shelf";
-        cancelEditBtn.classList.add("hidden");
+        document.getElementById("form-title").textContent = "Add any book";
     } else {
-        const docRef = await addDoc(collection(db, "books"), bookData);
-        books.push({ id: docRef.id, ...bookData });
+        const ref = await addDoc(collection(db, "books"), data);
+        books.push({ id: ref.id, ...data });
     }
 
-    renderBooks();
     form.reset();
     setSelectedTags([]);
-    searchBar.value = "";
-});
+    renderAllSections();
+    updateStats();
+};
 
-// Login overlay controls
-loginOpenBtn.addEventListener("click", () => {
-    loginOverlay.classList.remove("hidden");
-});
+document.getElementById("delete-book").onclick = async () => {
+    if (currentIndex == null) return;
+    await deleteDoc(doc(db, "books", books[currentIndex].id));
+    books.splice(currentIndex, 1);
+    modal.classList.add("hidden");
+    renderAllSections();
+    updateStats();
+};
 
-loginCloseBtn.addEventListener("click", () => {
-    loginOverlay.classList.add("hidden");
-});
+document.getElementById("edit-book").onclick = () => {
+    const b = books[currentIndex];
+    editingIndex = currentIndex;
+    document.getElementById("title").value = b.title;
+    document.getElementById("author").value = b.author || "";
+    document.getElementById("genre").value = b.genre || "";
+    document.getElementById("rating").value = b.rating || "";
+    document.getElementById("notes").value = b.notes || "";
+    document.getElementById("date-finished").value = b.dateFinished || "";
+    setSelectedTags(b.tags || []);
+    document.getElementById("form-title").textContent = "Edit book";
+    modal.classList.add("hidden");
+};
 
-loginOverlay.addEventListener("click", (e) => {
-    if (e.target === loginOverlay) {
-        loginOverlay.classList.add("hidden");
-    }
-});
+document.getElementById("close-modal").onclick = () => modal.classList.add("hidden");
+document.getElementById("login-open-btn").onclick = () => document.getElementById("login-overlay").classList.remove("hidden");
+document.getElementById("login-close-btn").onclick = () => document.getElementById("login-overlay").classList.add("hidden");
 
-// Auth buttons
-document.getElementById("login-btn").addEventListener("click", async () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+document.getElementById("login-btn").onclick = async () => {
     try {
-        await signInWithEmailAndPassword(auth, email, password);
-        loginOverlay.classList.add("hidden");
-    } catch (err) {
-        alert(err.message);
+        await signInWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value);
+        document.getElementById("login-overlay").classList.add("hidden");
+    } catch (e) {
+        alert(e.message);
     }
-});
+};
 
-document.getElementById("signup-btn").addEventListener("click", async () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+document.getElementById("signup-btn").onclick = async () => {
     try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        loginOverlay.classList.add("hidden");
-    } catch (err) {
-        alert(err.message);
+        await createUserWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value);
+        document.getElementById("login-overlay").classList.add("hidden");
+    } catch (e) {
+        alert(e.message);
     }
-});
+};
 
-document.getElementById("google-btn").addEventListener("click", async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-        await signInWithPopup(auth, provider);
-        loginOverlay.classList.add("hidden");
-    } catch (err) {
-        alert(err.message);
-    }
-});
-
-document.getElementById("github-btn").addEventListener("click", async () => {
-    const provider = new GithubAuthProvider();
-    try {
-        await signInWithPopup(auth, provider);
-        loginOverlay.classList.add("hidden");
-    } catch (err) {
-        alert(err.message);
-    }
-});
-
-document.getElementById("logout-btn").addEventListener("click", () => signOut(auth));
-
-modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeDetail();
-});
+document.getElementById("google-btn").onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
+document.getElementById("github-btn").onclick = () => signInWithPopup(auth, new GithubAuthProvider());
+document.getElementById("logout-btn").onclick = () => signOut(auth);

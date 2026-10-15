@@ -38,15 +38,17 @@
                     <option>Sport</option>
                     <option>Other</option>
                 </select>
-                <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)" required>
+                <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)">
+                <input type="date" id="date-finished">
 
                 <div class="tags-selector">
                     <p class="tags-label">Tags</p>
                     <label><input type="checkbox" name="tags" value="Favorites"> Favorites</label>
-                    <label><input type="checkbox" name="tags" value="Reread"> Reread</label>
-                    <label><input type="checkbox" name="tags" value="School"> School</label>
-                    <label><input type="checkbox" name="tags" value="Finished"> Finished</label>
+                    <label><input type="checkbox" name="tags" value="Want to Read"> Want to Read</label>
                     <label><input type="checkbox" name="tags" value="Currently Reading"> Currently Reading</label>
+                    <label><input type="checkbox" name="tags" value="Finished"> Finished</label>
+                    <label><input type="checkbox" name="tags" value="School"> School</label>
+                    <label><input type="checkbox" name="tags" value="Reread"> Reread</label>
                 </div>
 
                 <textarea id="notes" placeholder="Quick notes / Review"></textarea>
@@ -55,22 +57,69 @@
             </form>
         </section>
 
-        <section class="shelf">
-            <h2>Your shelf</h2>
+        <div class="shelf-container">
+            <section class="shelf-section">
+                <h2>Want to Read</h2>
+                <div id="want-list" class="book-grid"></div>
+            </section>
 
-            <div class="search-area">
-                <input type="text" id="search-bar" placeholder="Search your shelf...">
-                <select id="search-filter">
-                    <option value="all">All</option>
-                    <option value="title">Title</option>
-                    <option value="author">Author</option>
-                    <option value="genre">Genre</option>
-                    <option value="tags">Tags</option>
-                </select>
+            <section class="shelf-section">
+                <h2>Currently Reading</h2>
+                <div id="current-list" class="book-grid"></div>
+            </section>
+
+            <section class="shelf-section">
+                <h2>Finished</h2>
+                <div id="finished-list" class="book-grid"></div>
+            </section>
+
+            <section class="shelf-section">
+                <h2>All Books</h2>
+                <div class="search-area">
+                    <input type="text" id="search-bar" placeholder="Search...">
+                    <select id="search-filter">
+                        <option value="all">All</option>
+                        <option value="title">Title</option>
+                        <option value="author">Author</option>
+                        <option value="genre">Genre</option>
+                    </select>
+                </div>
+                <div id="all-list" class="book-grid"></div>
+            </section>
+        </div>
+
+        <section class="stats">
+            <h2>Reading Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-books">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="books-this-year">0</div>
+                    <div class="stat-label">This Year</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avg-rating">-</div>
+                    <div class="stat-label">Avg Rating</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="top-genre">-</div>
+                    <div class="stat-label">Top Genre</div>
+                </div>
             </div>
 
-            <div id="book-list"></div>
-            <p id="empty-message" class="empty hidden">No books match your search.</p>
+            <div class="goal-section">
+                <h3>Yearly Goal</h3>
+                <div class="goal-input">
+                    <input type="number" id="goal-input" min="1" placeholder="Goal">
+                    <button type="button" id="save-goal">Save</button>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <p id="goal-text">No goal set</p>
+            </div>
         </section>
     </main>
 
@@ -84,30 +133,23 @@
             <p id="detail-tags"></p>
             <p id="detail-notes"></p>
             <div class="modal-buttons">
-                <button id="edit-book">Edit this book</button>
-                <button id="delete-book">Delete this book</button>
+                <button id="edit-book">Edit</button>
+                <button id="delete-book">Delete</button>
             </div>
         </div>
     </div>
 
-    <!-- Login overlay -->
     <div id="login-overlay" class="login-overlay hidden">
         <div class="login-modal">
             <button id="login-close-btn" class="login-close">×</button>
             <h2>Log in / Sign up</h2>
-
-            <input type="text" id="first-name" placeholder="First name">
-            <input type="text" id="last-name" placeholder="Last name">
             <input type="email" id="email" placeholder="Email">
             <input type="password" id="password" placeholder="Password">
-
             <button type="button" id="login-btn">Log in</button>
             <button type="button" id="signup-btn">Sign up</button>
-
             <div class="divider">or</div>
-
-            <button type="button" id="google-btn" class="provider-btn">Continue with Google</button>
-            <button type="button" id="github-btn" class="provider-btn">Continue with GitHub</button>
+            <button type="button" id="google-btn" class="provider-btn">Google</button>
+            <button type="button" id="github-btn" class="provider-btn">GitHub</button>
         </div>
     </div>
 
@@ -115,20 +157,13 @@
         <p>Made by Nebulous • October 2026</p>
     </footer>
 
-    <!-- Firebase SDK (keep your config) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
         import { getAuth } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
         const firebaseConfig = {
-             apiKey: "AIzaSyAxmSjtoDEN6ISiEkV58d6kcFke4zbAGx0",
-             authDomain: "exolens-login.firebaseapp.com",
-             projectId: "exolens-login",
-             storageBucket: "exolens-login.firebasestorage.app",
-             messagingSenderId: "681324039728",
-             appId: "1:681324039728:web:8ca800589a5136477b67f5",
-             measurementId: "G-BVZ9EQ6XBT"
+            // paste your config here
         };
 
         const app = initializeApp(firebaseConfig);

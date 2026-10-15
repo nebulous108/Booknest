@@ -11,7 +11,6 @@ body {
     font-size: 16px;
     line-height: 1.5;
     padding: 20px;
-    min-height: 100vh;
 }
 
 header {
@@ -25,9 +24,7 @@ h1 {
     font-family: 'Press Start 2P', monospace;
     font-size: 28px;
     color: #e94560;
-    letter-spacing: 1px;
     text-shadow: 2px 2px 0 #0f3460;
-    margin-bottom: 8px;
 }
 
 .tagline {
@@ -45,7 +42,9 @@ main {
     gap: 24px;
 }
 
-.add-book, .shelf {
+.add-book,
+.shelf-section,
+.stats {
     background: #16213e;
     border: 4px solid #0f3460;
     padding: 24px;
@@ -56,19 +55,21 @@ h2 {
     font-family: 'Press Start 2P', monospace;
     font-size: 14px;
     color: #e94560;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 
-input, select, textarea, button {
+input,
+select,
+textarea,
+button {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 15px;
     background: #0f3460;
     color: #eaeaea;
     border: 3px solid #e94560;
-    padding: 12px 14px;
+    padding: 12px;
     margin: 6px 0;
     width: 100%;
-    border-radius: 2px;
 }
 
 button {
@@ -77,18 +78,10 @@ button {
     background: #e94560;
     color: #1a1a2e;
     cursor: pointer;
-    border: 3px solid #0f3460;
-    margin-top: 12px;
-    padding: 14px;
 }
 
 button:hover {
     background: #ff6b81;
-}
-
-textarea {
-    height: 100px;
-    resize: vertical;
 }
 
 .tags-selector {
@@ -96,7 +89,6 @@ textarea {
     padding: 12px;
     background: #0f3460;
     border: 3px solid #e94560;
-    border-radius: 2px;
 }
 
 .tags-label {
@@ -111,33 +103,20 @@ textarea {
     align-items: center;
     margin: 4px 12px 4px 0;
     font-size: 14px;
-    cursor: pointer;
 }
 
-.tags-selector input[type="checkbox"] {
+.tags-selector input {
     width: auto;
     margin: 0 6px 0 0;
-    accent-color: #e94560;
 }
 
-.search-area {
+.shelf-container {
     display: flex;
-    gap: 10px;
-    margin-bottom: 16px;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.search-area input {
-    flex: 1;
-    margin: 0;
-}
-
-.search-area select {
-    width: 130px;
-    margin: 0;
-    flex-shrink: 0;
-}
-
-#book-list {
+.book-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px;
@@ -147,19 +126,15 @@ textarea {
     background: #0f3460;
     border: 3px solid #e94560;
     padding: 16px;
-    font-size: 14px;
-    word-break: break-word;
     cursor: pointer;
-    transition: transform 0.15s, border-color 0.15s;
-    line-height: 1.4;
 }
 
 .book-card strong {
     font-family: 'Press Start 2P', monospace;
     font-size: 11px;
+    color: #e94560;
     display: block;
     margin-bottom: 6px;
-    color: #e94560;
 }
 
 .book-card:hover {
@@ -180,68 +155,121 @@ textarea {
     font-size: 11px;
     padding: 3px 8px;
     border-radius: 10px;
-    font-weight: 500;
 }
 
-.empty {
+.search-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.search-area input {
+    flex: 1;
+    margin: 0;
+}
+
+.search-area select {
+    width: 120px;
+    margin: 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: #0f3460;
+    border: 3px solid #e94560;
+    padding: 14px;
     text-align: center;
+}
+
+.stat-number {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: #e94560;
+}
+
+.stat-label {
+    font-size: 11px;
     color: #8b9dc3;
-    margin-top: 20px;
-    font-size: 15px;
 }
 
-.empty.hidden {
-    display: none;
+.goal-input {
+    display: flex;
+    gap: 8px;
 }
 
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+.goal-input input {
+    flex: 1;
+}
+
+.goal-input button {
+    width: auto;
+}
+
+.progress-container {
+    background: #0f3460;
+    border: 3px solid #e94560;
+    height: 20px;
+    margin: 10px 0;
+}
+
+.progress-bar {
     height: 100%;
+    background: #e94560;
+    width: 0%;
+}
+
+.modal,
+.login-overlay {
+    position: fixed;
+    inset: 0;
     background: rgba(0, 0, 0, 0.75);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
-    padding: 20px;
+    z-index: 100;
 }
 
-.modal.hidden {
+.modal.hidden,
+.login-overlay.hidden {
     display: none;
 }
 
-.modal-content {
+.modal-content,
+.login-modal {
     background: #16213e;
     border: 4px solid #e94560;
-    padding: 28px;
-    max-width: 460px;
-    width: 100%;
-    font-size: 15px;
-    line-height: 1.5;
+    padding: 24px;
+    max-width: 420px;
+    width: 90%;
+    position: relative;
 }
 
-.modal-content h3 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 14px;
-    color: #e94560;
-    margin-bottom: 14px;
+.login-open-btn,
+.user-info {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 50;
+    width: auto;
 }
 
-.modal-content p {
-    margin: 8px 0;
-}
-
-.modal-buttons {
+.user-info {
     display: flex;
-    gap: 10px;
-    margin-top: 18px;
+    gap: 8px;
+    align-items: center;
+    background: #16213e;
+    border: 3px solid #e94560;
+    padding: 8px 12px;
 }
 
-.modal-buttons button {
-    flex: 1;
-    margin-top: 0;
+.hidden {
+    display: none;
 }
 
 footer {
@@ -252,145 +280,21 @@ footer {
     color: #0f3460;
 }
 
-.hidden {
-    display: none;
-}
-
-#cancel-edit {
-    background: #0f3460;
-    color: #eaeaea;
-    border-color: #e94560;
-}
-
-#cancel-edit:hover {
-    background: #16213e;
-}
-
-/* Login button & overlay */
-.login-open-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 100;
-    width: auto;
-    padding: 10px 16px;
-    font-size: 12px;
-}
-
-.login-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.75);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-}
-
-.login-overlay.hidden {
-    display: none;
-}
-
-.login-modal {
-    background: #16213e;
-    border: 4px solid #e94560;
-    padding: 28px;
-    width: 90%;
-    max-width: 380px;
-    position: relative;
-}
-
-.login-close {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    background: none;
-    border: none;
-    color: #eaeaea;
-    font-size: 24px;
-    cursor: pointer;
-    width: auto;
-    padding: 0;
-}
-
-.login-modal h2 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 12px;
-    color: #e94560;
-    margin-bottom: 16px;
-    text-align: center;
-}
-
-.divider {
-    text-align: center;
-    margin: 14px 0;
-    color: #8b9dc3;
-    font-size: 13px;
-}
-
-.provider-btn {
-    background: #0f3460;
-    color: #eaeaea;
-    border-color: #e94560;
-    margin-top: 8px;
-}
-
-.provider-btn:hover {
-    background: #16213e;
-}
-
-.user-info {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 100;
-    background: #16213e;
-    border: 3px solid #e94560;
-    padding: 8px 12px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.user-info.hidden {
-    display: none;
-}
-
-.user-info button {
-    width: auto;
-    margin: 0;
-    padding: 6px 10px;
-    font-size: 10px;
-}
-
-@media (min-width: 860px) {
-    body {
-        padding: 32px;
-    }
-
-    h1 {
-        font-size: 36px;
-    }
-
+@media (min-width: 900px) {
     main {
         flex-direction: row;
-        align-items: flex-start;
-        gap: 32px;
+        flex-wrap: wrap;
     }
 
     .add-book {
-        flex: 0 0 380px;
+        flex: 0 0 360px;
     }
 
-    .shelf {
+    .shelf-container {
         flex: 1;
     }
 
-    #book-list {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    .stats {
+        flex: 1 1 100%;
     }
 }
