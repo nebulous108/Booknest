@@ -5,7 +5,8 @@ import {
     onAuthStateChanged, 
     GoogleAuthProvider, 
     GithubAuthProvider, 
-    signInWithPopup 
+    signInWithRedirect,
+    getRedirectResult
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
 
 import { 
@@ -25,6 +26,7 @@ const db = window.db;
 const form = document.getElementById("book-form");
 const modal = document.getElementById("detail-modal");
 const submitBtn = document.getElementById("submit-btn");
+const loginOverlay = document.getElementById("login-overlay");
 
 let books = [];
 let currentIndex = null;
@@ -32,12 +34,25 @@ let editingIndex = null;
 let currentUser = null;
 let yearlyGoal = 0;
 
+// Handle redirect result (for Google / GitHub)
+getRedirectResult(auth)
+    .then((result) => {
+        if (result && result.user) {
+            loginOverlay.classList.add("hidden");
+        }
+    })
+    .catch((error) => {
+        console.error(error);
+        alert(error.message);
+    });
+
 onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     if (user) {
         document.getElementById("login-open-btn").classList.add("hidden");
         document.getElementById("user-info").classList.remove("hidden");
-        document.getElementById("user-email").textContent = user.email || "Logged in";
+        document.getElementById("user-email").textContent = user.email || user.displayName || "Logged in";
+        loginOverlay.classList.add("hidden");
         await loadBooks();
         loadGoal();
     } else {
@@ -169,7 +184,7 @@ form.onsubmit = async (e) => {
     };
 
     if (!data.title) return;
-        
+
     submitBtn.disabled = true;
     submitBtn.textContent = "Saving...";
 
@@ -198,7 +213,6 @@ form.onsubmit = async (e) => {
 
 document.getElementById("delete-book").onclick = async () => {
     if (currentIndex == null) return;
-
     const deleteBtn = document.getElementById("delete-book");
     deleteBtn.disabled = true;
     deleteBtn.textContent = "Deleting...";
@@ -234,9 +248,8 @@ document.getElementById("edit-book").onclick = () => {
 
 document.getElementById("close-modal").onclick = () => modal.classList.add("hidden");
 
-// Fixed login overlay controls
+// Login overlay
 const loginOpenBtn = document.getElementById("login-open-btn");
-const loginOverlay = document.getElementById("login-overlay");
 const loginCloseBtn = document.getElementById("login-close-btn");
 
 if (loginOpenBtn && loginOverlay) {
@@ -277,6 +290,13 @@ document.getElementById("signup-btn").onclick = async () => {
     }
 };
 
-document.getElementById("google-btn").onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
-document.getElementById("github-btn").onclick = () => signInWithPopup(auth, new GithubAuthProvider());
+// Google & GitHub using redirect
+document.getElementById("google-btn").onclick = () => {
+    signInWithRedirect(auth, new GoogleAuthProvider());
+};
+
+document.getElementById("github-btn").onclick = () => {
+    signInWithRedirect(auth, new GithubAuthProvider());
+};
+
 document.getElementById("logout-btn").onclick = () => signOut(auth);
