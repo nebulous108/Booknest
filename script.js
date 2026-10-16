@@ -34,7 +34,7 @@ let editingIndex = null;
 let currentUser = null;
 let yearlyGoal = 0;
 
-// Handle redirect result (for Google / GitHub)
+// Should handle redirect result (for Google / GitHub)
 getRedirectResult(auth)
     .then((result) => {
         if (result && result.user) {
