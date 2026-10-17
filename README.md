@@ -1,33 +1,28 @@
 # BookNest
 
-A small personal website to keep track of the books I've read.
-
-I made this to practice HTML, CSS, and JavaScript. It saves everything in the browser so I don’t lose my list when I refresh the page.
+A personal reading tracker where you can log books, organize them by status, and see simple reading stats.
 
 ## Features
 
-- Add books with title, author, genre, rating, and notes
-- Edit or delete books
-- Search by title, author, genre, or all of them
-- Click a book to see the full details
-- Dark pixel-art style (using Press Start 2P font)
-
-## How to use
-
-1. Open the site
-2. Fill out the form and click **Add to shelf**
-3. Click any book card to view, edit, or delete it
-4. Use the search bar and the dropdown to filter your shelf
+- Add, edit, and delete books
+- Separate sections for Want to Read, Currently Reading, and Finished
+- Search and filter your shelf
+- Tags (Favorites, School, Reread, etc.)
+- Reading stats (total books, this year, average rating, top genre)
+- Yearly reading goal with progress bar
+- User accounts with email/password, Google, and GitHub login
+- Books are saved per user with Firebase
 
 ## Tech
 
-- HTML
-- CSS
-- JavaScript
-- localStorage (no backend)
+- HTML, CSS, JavaScript
+- Firebase Authentication
+- Cloud Firestore
+
+## Live Site
+
+https://nebulous108.github.io/Booknest
 
 ## Notes
 
-Still a work in progress. Planning to add more stuff later like reading goals and better stats.
-
-Made by Nebulous • October 2026
+This is a personal project. Data is stored in Firebase so it stays with your account across devices.
